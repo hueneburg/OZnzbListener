@@ -6,6 +6,7 @@ import smtplib
 from email.mime.text import MIMEText
 import keyring
 import sys
+import getpass
 
 
 arguments = ['-a', '-d', '-e', '-h', '-k', '-r', 's', '-p', '-u', '--add-keyword', '--delete-keyword', '--api',
@@ -230,9 +231,8 @@ def change_password(args, index):
     server = re.findall('server:.+', open('data.conf', 'r').read())[0]
     server = re.findall('\'[^\']+\'', server)[0]
     server = re.findall('[^\']+', server)[0]
-    index += 1
-    if not args[index] in arguments:
-        keyring.set_password('password', server, args[index])
+    pw = getpass.getpass()
+    keyring.set_password('password', server, pw)
     return index + 1
 
 
@@ -280,7 +280,7 @@ def show_help(args, index):
     separator = ''
     print('Usage:\nlistener.py [(-k|--add-keyword) KEYWORDS] [(-d|--delete-keyword) KEYWORDS] [(-a|--api) APIKEY] '
           '[(-r|--add-receiver) RECEIVERS] [--delete-receiver RECEIVERS] [(-s|--sender) SENDER] [(-h|--server) SERVER] '
-          '[(-e|--ssl)] [(-u|--user) USER] [(-p|--password) PASSWORD] [--status] [--help]')
+          '[(-e|--ssl)] [(-u|--user) USER] [(-p|--password)] [--status] [--help]')
     print(separator)
     print('(-k|--add-keyword) KEYWORDS: Adds the keywords to the keyword list. Keywords are separated by a whitespace.')
     print(separator)
@@ -300,7 +300,7 @@ def show_help(args, index):
     print(separator)
     print('(-u|--user) USER: Changes the username for the SMTP-server.')
     print(separator)
-    print('(-p|--password) PASSWORD: Changes the password for the SMTP-server.')
+    print('(-p|--password): Changes the password for the SMTP-server.')
     print(separator)
     print('--status: Prints the configuration (except password).')
     print(separator)
@@ -334,7 +334,7 @@ def send():
     port = re.findall('port:\d+', options)[0]
     port = re.findall('\d+', port)[0]
     ssl = re.findall('ssl:.+', options)[0]
-    if ssl.endswith('yes'):
+    if ssl.endswith('yes\''):
         ssl = True
     else:
         ssl = False
@@ -358,15 +358,14 @@ def send():
         else:
             channel = json.loads(r.read().decode('utf-8'))['channel']
             for item in channel['item']:
-                print('Link:  ' + item['link'])
-                print('Title: ' + item['title'])
-                print('Desc:  ' + item['description'])
+                emailBody += 'Link:  ' + item['link'] + '\n'
+                emailBody += 'Title: ' + item['title'] + '\n'
+                emailBody += 'Desc:  ' + item['description'] + '\n\n'
         emailBody += '\n\n'
 
     msg = MIMEText(emailBody)
     msg['Subject'] = 'UseNet News'
     msg['From'] = sender
-    msg['To'] = receivers
 
     user = keyring.get_password('username', server)
     pw = keyring.get_password('password', server)
@@ -377,12 +376,14 @@ def send():
         smtp = smtplib.SMTP(host=server, port=port)
 
     smtp.login(user, pw)
-    smtp.send_message(msg)
+    for receiver in receivers:
+        msg['To'] = receiver
+        smtp.send_message(msg)
     smtp.quit()
 
 
 args = sys.argv
-if len(args) == 0:
+if len(args) == 1:
     send()
 else:
     i = 1
