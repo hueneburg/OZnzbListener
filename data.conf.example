@@ -2,4 +2,6 @@ api:''
 receivers:[]
 sender:''
 keywords:[]
-smtp:''
+server:''
+port:
+ssl:'yes'
