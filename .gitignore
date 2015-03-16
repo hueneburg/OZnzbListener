@@ -52,3 +52,9 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# PyCharm Project Files
+.idea/*
+
+# Ignore real config data
+*.conf
