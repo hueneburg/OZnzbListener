@@ -8,12 +8,15 @@ import keyring
 import sys
 import getpass
 
-
+# all possible arguments that have meaning to the program
 arguments = ['-a', '-d', '-e', '-h', '-k', '-r', 's', '-p', '-u', '--add-keyword', '--delete-keyword', '--api',
              '--add-receiver', '--delete-receiver', '--sender', '--server', '--ssl', '--user', '--password',
              '--status', '--help']
 
 
+# Adds keywords to the list in data.conf
+# args: command line arguments
+# index: the index of the current argument from args
 def add_keywords(args, index):
     f = open('data.conf', 'r')
     lines = f.readlines()
@@ -41,6 +44,9 @@ def add_keywords(args, index):
     return index
 
 
+# Deletes keywords from the list in data.conf
+# args: command line arguments
+# index: the index of the current argument from args
 def delete_keywords(args, index):
     f = open('data.conf', 'r')
     lines = f.readlines()
@@ -68,6 +74,9 @@ def delete_keywords(args, index):
     return index
 
 
+# changes the apikey value in data.conf
+# args: command line arguments
+# index: the index of the current argument from args
 def change_api(args, index):
     f = open('data.conf', 'r')
     lines = f.readlines()
@@ -91,6 +100,9 @@ def change_api(args, index):
     return index
 
 
+# Adds receivers to the list in data.conf
+# args: command line arguments
+# index: the index of the current argument from args
 def add_receivers(args, index):
     f = open('data.conf', 'r')
     lines = f.readlines()
@@ -118,6 +130,9 @@ def add_receivers(args, index):
     return index
 
 
+# Deletes receivers to the list in data.conf
+# args: command line arguments
+# index: the index of the current argument from args
 def delete_receivers(args, index):
     f = open('data.conf', 'r')
     lines = f.readlines()
@@ -145,6 +160,9 @@ def delete_receivers(args, index):
     return index
 
 
+# Changes the sender of the emails in data.conf
+# args: command line arguments
+# index: the index of the current argument from args
 def change_sender(args, index):
     f = open('data.conf', 'r')
     lines = f.readlines()
@@ -168,6 +186,9 @@ def change_sender(args, index):
     return index
 
 
+# Changes the SMTP-server in data.conf
+# args: command line arguments
+# index: the index of the current argument from args
 def change_server(args, index):
     f = open('data.conf', 'r')
     lines = f.readlines()
@@ -197,6 +218,9 @@ def change_server(args, index):
     return index
 
 
+# Changes the ssl variable in data.conf to yes or no
+# args: command line arguments
+# index: the index of the current argument from args
 def toggle_ssl(args, index):
     f = open('data.conf', 'r')
     lines = f.readlines()
@@ -217,6 +241,9 @@ def toggle_ssl(args, index):
     return index + 1
 
 
+# Changes the user used to authenticate at the SMTP-server
+# args: command line arguments
+# index: the index of the current argument from args
 def change_user(args, index):
     server = re.findall('server:.+', open('data.conf', 'r').read())[0]
     server = re.findall('\'[^\']+\'', server)[0]
@@ -227,6 +254,9 @@ def change_user(args, index):
     return index + 1
 
 
+# Changes the password used to authenticate at the SMTP-server
+# args: command line arguments
+# index: the index of the current argument from args
 def change_password(args, index):
     server = re.findall('server:.+', open('data.conf', 'r').read())[0]
     server = re.findall('\'[^\']+\'', server)[0]
@@ -236,6 +266,9 @@ def change_password(args, index):
     return index + 1
 
 
+# Prints the current configuration
+# args: command line arguments
+# index: the index of the current argument from args
 def show_status(args, index):
     options = open('data.conf', 'r').read()
     server = re.findall('server:.+', options)[0]
@@ -248,6 +281,9 @@ def show_status(args, index):
     return index + 1
 
 
+# Decides which methods are called with the current argument
+# args: command line arguments
+# index: the index of the current argument from args
 def switch_argument(args, index):
     arg = args[index]
     if (arg == '-k') | (arg == '--add-keyword'):
@@ -276,6 +312,9 @@ def switch_argument(args, index):
         return show_help(args, index)
 
 
+# Prints the help screen
+# args: command line arguments
+# index: the index of the current argument from args
 def show_help(args, index):
     separator = ''
     print('Usage:\nlistener.py [(-k|--add-keyword) KEYWORDS] [(-d|--delete-keyword) KEYWORDS] [(-a|--api) APIKEY] '
@@ -308,6 +347,9 @@ def show_help(args, index):
     return index + 1
 
 
+# Gets the usenet data and sends it to the receivers
+# args: command line arguments
+# index: the index of the current argument from args
 def send():
     options = (open('data.conf', 'r').read())
     api = re.findall('api:.+', options)[0]
