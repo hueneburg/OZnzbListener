@@ -390,11 +390,11 @@ def send():
         keyword = str.replace(keyword, ' ', '+')
         r = {}
         i = 0
+        url = 'https://api.oznzb.com/api?extended=1&o=json&t=search&q=' + keyword + '&apikey=' + api
         while (i < 20) & (r == {}):
             i += 1
             try:
-                r = urllib.request.urlopen(
-                    'https://api.oznzb.com/api?extended=1&o=json&t=search&q=' + keyword + '&apikey=' + api)
+                r = urllib.request.urlopen(url)
             except urllib.error.URLError:
                 r = {}
 
@@ -402,6 +402,8 @@ def send():
             emailBody += 'An error occurred (probably connection refused, which is a server error)'
         else:
             channel = json.loads(r.read().decode('utf-8'))['channel']
+            if not hasattr(channel, 'item'):
+                continue
             for item in channel['item']:
                 date = time.strptime(item['pubDate'][:-6], '%a, %d %b %Y %H:%M:%S')
                 date = datetime.fromtimestamp(time.mktime(date))
