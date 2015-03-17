@@ -7,6 +7,8 @@ from email.mime.text import MIMEText
 import keyring
 import sys
 import getpass
+import time
+from datetime import datetime, timedelta
 
 # all possible arguments that have meaning to the program
 arguments = ['-a', '-d', '-e', '-h', '-k', '-r', 's', '-p', '-u', '--add-keyword', '--delete-keyword', '--api',
@@ -382,6 +384,7 @@ def send():
         ssl = False
 
     emailBody = ''
+    now = time.time()
     for keyword in keywords:
         emailBody += keyword + ':\n'
         keyword = str.replace(keyword, ' ', '+')
@@ -400,14 +403,22 @@ def send():
         else:
             channel = json.loads(r.read().decode('utf-8'))['channel']
             for item in channel['item']:
-                emailBody += 'Link:  ' + item['link'] + '\n'
-                emailBody += 'Title: ' + item['title'] + '\n'
-                emailBody += 'Desc:  ' + item['description'] + '\n\n'
+                date = time.strptime(item['pubDate'][:-6], '%a, %d %b %Y %H:%M:%S')
+                date = datetime.fromtimestamp(time.mktime(date))
+                if (datetime.now() - date) > timedelta(1):  # 24h
+                    break
+                emailBody += 'Link:     ' + item['link'] + '\n'
+                emailBody += 'Title:    ' + item['title'] + '\n'
+                emailBody += 'Uploaded: ' + item['pubDate'] + '\n'
+                emailBody += 'Desc:     ' + item['description'] + '\n\n'
         emailBody += '\n\n'
 
     msg = MIMEText(emailBody)
     msg['Subject'] = 'UseNet News'
     msg['From'] = sender
+
+    if not emailBody.strip():
+        exit(0)
 
     user = keyring.get_password('username', server)
     pw = keyring.get_password('password', server)
