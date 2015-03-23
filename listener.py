@@ -40,6 +40,7 @@ def add_keywords(args, index):
                     if not args[index] in keywords:
                         keywords.append(args[index])
                 index += 1
+            keywords.sort(key=str.lower)
             line = 'keywords:' + str(keywords) + '\n'
         f.write(line)
     f.close()
@@ -126,6 +127,7 @@ def add_receivers(args, index):
                     if not args[index] in receivers:
                         receivers.append(args[index])
                 index += 1
+            receivers.sort(key=str.lower)
             line = 'receivers:' + str(receivers) + '\n'
         f.write(line)
     f.close()
@@ -387,7 +389,7 @@ def send():
     now = time.time()
     for keyword in keywords:
         emailBody += keyword + ':\n'
-        keyword = str.replace(keyword, ' ', '+')
+        keyword = str.replace(keyword, ' ', '%20')
         r = {}
         i = 0
         url = 'https://api.oznzb.com/api?extended=1&o=json&t=search&q=' + keyword + '&apikey=' + api
@@ -407,7 +409,7 @@ def send():
             for item in channel['item']:
                 date = time.strptime(item['pubDate'][:-6], '%a, %d %b %Y %H:%M:%S')
                 date = datetime.fromtimestamp(time.mktime(date))
-                if (datetime.now() - date) > timedelta(1):  # 24h
+                if (datetime.now() - date) > timedelta(7):  # 1week
                     break
                 emailBody += 'Link:     ' + item['link'] + '\n'
                 emailBody += 'Title:    ' + item['title'] + '\n'
