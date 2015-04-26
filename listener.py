@@ -404,12 +404,14 @@ def send():
             emailBody += 'An error occurred (probably connection refused, which is a server error)'
         else:
             channel = json.loads(r.read().decode('utf-8'))['channel']
-            if not hasattr(channel, 'item'):
+            if 'item' not in channel:
                 continue
             for item in channel['item']:
+                if not isinstance(item, dict):
+                    continue
                 date = time.strptime(item['pubDate'][:-6], '%a, %d %b %Y %H:%M:%S')
                 date = datetime.fromtimestamp(time.mktime(date))
-                if (datetime.now() - date) > timedelta(7):  # 1week
+                if (datetime.now() - date) > timedelta(365):  # 1 year
                     break
                 emailBody += 'Link:     ' + item['link'] + '\n'
                 emailBody += 'Title:    ' + item['title'] + '\n'
