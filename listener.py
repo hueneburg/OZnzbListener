@@ -9,6 +9,7 @@ import sys
 import getpass
 import time
 from datetime import datetime, timedelta
+import os
 
 # all possible arguments that have meaning to the program
 arguments = ['-a', '-d', '-e', '-h', '-k', '-r', 's', '-p', '-u', '--add-keyword', '--delete-keyword', '--api',
@@ -20,10 +21,12 @@ arguments = ['-a', '-d', '-e', '-h', '-k', '-r', 's', '-p', '-u', '--add-keyword
 # args: command line arguments
 # index: the index of the current argument from args
 def add_keywords(args, index):
-    f = open('data.conf', 'r')
+    path = os.path.realpath(__file__)
+    path = path[:path.rfind('/')]
+    f = open(path + '/data.conf', 'r')
     lines = f.readlines()
     f.close()
-    f = open('data.conf', 'w')
+    f = open(path + '/data.conf', 'w')
     for line in lines:
         if line.startswith('keyword'):
             keywords = re.findall('keywords:.*', line)[0]
@@ -51,10 +54,12 @@ def add_keywords(args, index):
 # args: command line arguments
 # index: the index of the current argument from args
 def delete_keywords(args, index):
-    f = open('data.conf', 'r')
+    path = os.path.realpath(__file__)
+    path = path[:path.rfind('/')]
+    f = open(path + '/data.conf', 'r')
     lines = f.readlines()
     f.close()
-    f = open('data.conf', 'w')
+    f = open(path + '/data.conf', 'w')
     for line in lines:
         if line.startswith('keyword'):
             keywords = re.findall('keywords:.*', line)[0]
@@ -81,10 +86,12 @@ def delete_keywords(args, index):
 # args: command line arguments
 # index: the index of the current argument from args
 def change_api(args, index):
-    f = open('data.conf', 'r')
+    path = os.path.realpath(__file__)
+    path = path[:path.rfind('/')]
+    f = open(path + '/data.conf', 'r')
     lines = f.readlines()
     f.close()
-    f = open('data.conf', 'w')
+    f = open(path + '/data.conf', 'w')
     for line in lines:
         if line.startswith('api'):
             api = re.findall('api:.+', line)[0]
@@ -107,10 +114,12 @@ def change_api(args, index):
 # args: command line arguments
 # index: the index of the current argument from args
 def add_receivers(args, index):
-    f = open('data.conf', 'r')
+    path = os.path.realpath(__file__)
+    path = path[:path.rfind('/')]
+    f = open(path + '/data.conf', 'r')
     lines = f.readlines()
     f.close()
-    f = open('data.conf', 'w')
+    f = open(path + '/data.conf', 'w')
     for line in lines:
         if line.startswith('receiver'):
             receivers = re.findall('receivers:.*', line)[0]
@@ -138,10 +147,12 @@ def add_receivers(args, index):
 # args: command line arguments
 # index: the index of the current argument from args
 def delete_receivers(args, index):
-    f = open('data.conf', 'r')
+    path = os.path.realpath(__file__)
+    path = path[:path.rfind('/')]
+    f = open(path + '/data.conf', 'r')
     lines = f.readlines()
     f.close()
-    f = open('data.conf', 'w')
+    f = open(path + '/data.conf', 'w')
     for line in lines:
         if line.startswith('receiver'):
             receivers = re.findall('receivers:.*', line)[0]
@@ -168,10 +179,12 @@ def delete_receivers(args, index):
 # args: command line arguments
 # index: the index of the current argument from args
 def change_sender(args, index):
-    f = open('data.conf', 'r')
+    path = os.path.realpath(__file__)
+    path = path[:path.rfind('/')]
+    f = open(path + '/data.conf', 'r')
     lines = f.readlines()
     f.close()
-    f = open('data.conf', 'w')
+    f = open(path + '/data.conf', 'w')
     for line in lines:
         if line.startswith('sender'):
             sender = re.findall('sender:.+', line)[0]
@@ -194,10 +207,12 @@ def change_sender(args, index):
 # args: command line arguments
 # index: the index of the current argument from args
 def change_server(args, index):
-    f = open('data.conf', 'r')
+    path = os.path.realpath(__file__)
+    path = path[:path.rfind('/')]
+    f = open(path + '/data.conf', 'r')
     lines = f.readlines()
     f.close()
-    f = open('data.conf', 'w')
+    f = open(path + '/data.conf', 'w')
     for line in lines:
         if line.startswith('server'):
             server = re.findall('server:.+', line)[0]
@@ -226,10 +241,12 @@ def change_server(args, index):
 # args: command line arguments
 # index: the index of the current argument from args
 def toggle_ssl(args, index):
-    f = open('data.conf', 'r')
+    path = os.path.realpath(__file__)
+    path = path[:path.rfind('/')]
+    f = open(path + '/data.conf', 'r')
     lines = f.readlines()
     f.close()
-    f = open('data.conf', 'w')
+    f = open(path + '/data.conf', 'w')
     for line in lines:
         if line.startswith('ssl'):
             ssl = re.findall('ssl:.+', line)[0]
@@ -249,7 +266,9 @@ def toggle_ssl(args, index):
 # args: command line arguments
 # index: the index of the current argument from args
 def change_user(args, index):
-    server = re.findall('server:.+', open('data.conf', 'r').read())[0]
+    path = os.path.realpath(__file__)
+    path = path[:path.rfind('/')]
+    server = re.findall('server:.+', open(path + '/data.conf', 'r').read())[0]
     server = re.findall('\'[^\']+\'', server)[0]
     server = re.findall('[^\']+', server)[0]
     index += 1
@@ -262,7 +281,9 @@ def change_user(args, index):
 # args: command line arguments
 # index: the index of the current argument from args
 def change_password(args, index):
-    server = re.findall('server:.+', open('data.conf', 'r').read())[0]
+    path = os.path.realpath(__file__)
+    path = path[:path.rfind('/')]
+    server = re.findall('server:.+', open(path + '/data.conf', 'r').read())[0]
     server = re.findall('\'[^\']+\'', server)[0]
     server = re.findall('[^\']+', server)[0]
     pw = getpass.getpass()
@@ -274,7 +295,9 @@ def change_password(args, index):
 # args: command line arguments
 # index: the index of the current argument from args
 def show_status(args, index):
-    options = open('data.conf', 'r').read()
+    path = os.path.realpath(__file__)
+    path = path[:path.rfind('/')]
+    options = open(path + '/data.conf', 'r').read()
     server = re.findall('server:.+', options)[0]
     server = re.findall('\'[^\']+\'', server)[0]
     server = re.findall('[^\']+', server)[0]
@@ -355,7 +378,9 @@ def show_help(args, index):
 # args: command line arguments
 # index: the index of the current argument from args
 def send():
-    options = (open('data.conf', 'r').read())
+    path = os.path.realpath(__file__)
+    path = path[:path.rfind('/')]
+    options = (open(path + '/data.conf', 'r').read())
     api = re.findall('api:.+', options)[0]
     api = re.findall('\'.+\'', api)[0]
     api = re.findall('[^\']+', api)[0]
@@ -429,6 +454,7 @@ def send():
     user = keyring.get_password('username', server)
     pw = keyring.get_password('password', server)
     smtp = {}
+    print(keyring)
     if ssl:
         smtp = smtplib.SMTP_SSL(host=server, port=port)
     else:
